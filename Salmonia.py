@@ -1,3 +1,34 @@
+Skip to content
+Search or jump to…
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@lemon0617tea 
+tkgstrator
+/
+Salmonia
+Public
+2
+69
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+Salmonia/Salmonia.py /
+@PapaSpiff
+PapaSpiff keep only one version
+Latest commit cca53d8 2 days ago
+ History
+ 5 contributors
+@PapaSpiff@tkgstrator@GungeeSpla@sasagar@yukidaruma
+239 lines (208 sloc)  8.11 KB
+   
 # -*- coding: utf-8 -*-
 import sys
 import json
@@ -11,7 +42,6 @@ from more_itertools import chunked
 import iksm
 import glob
 
-VERSION = "1.13.2"
 LANG = "en-US"
 URL = "https://salmon-stats.yuki.games/"
 
@@ -44,9 +74,11 @@ class Salmonia():
     api_errors = 0
 
     def __init__(self):
-        Log(f"Salmonia version {VERSION}")
+        Log(f"Salmonia version {iksm.version}")
         Log("Thanks @Yukinkling and @barley_ural!")
-
+        self.initConfig()
+        
+    def initConfig(self):
         try:
             with open(FilePath("config.json"), mode="r") as f:  # 設定ファイルがある場合
                 params = json.load(f)
@@ -127,10 +159,20 @@ class Salmonia():
 
     def update(self):
         try:
-            Log("Iksm Session regenarating")
+            Log("Iksm Session regenerating")
             self.iksm_session = iksm.get_cookie(self.session_token)
             self.output()
-        except:
+        except Exception as ex:
+            Log("Session Cookie Error")
+            for i in range(5):
+                try:
+                    sleep(120)
+                    Salmonia.initConfig(self)
+                    self.iksm_session = iksm.get_cookie(self.session_token)
+                    self.output()
+                    return
+                except Exception as nex:
+                    Log(f"Session Cookie Error (try {i})")
             raise ValueError("Invalid session_token")
 
     def getJobId(self):
@@ -226,3 +268,16 @@ if __name__ == "__main__":
         CLog("Keyboard Interrupt")
     except Exception as error:
         Log(error)
+© 2021 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+Loading complete
